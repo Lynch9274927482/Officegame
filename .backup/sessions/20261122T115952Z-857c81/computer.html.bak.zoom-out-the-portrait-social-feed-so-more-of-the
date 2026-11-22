@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Facebook</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin:0; min-height:100%; background:#f0f2f5; color:#1c1e21; font-family:Arial,Helvetica,sans-serif; }
+  body { overflow:hidden; }
+  button, input { font:inherit; }
+  button { cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .appShell { height:100dvh; display:none; flex-direction:column; }
+  .topbar { min-height:58px; display:flex; align-items:center; gap:18px; padding:7px max(14px,calc((100vw - 1180px)/2)); background:#fff; border-bottom:1px solid #dddfe2; box-shadow:0 1px 2px #0000000c; }
+  .brand { display:flex; align-items:center; flex:none; }
+  .brand img { display:block; width:42px; height:42px; object-fit:contain; }
+  .brandFallback { width:42px; height:42px; border-radius:50%; display:grid; place-items:center; background:#0866ff; color:#fff; font-size:38px; line-height:1; font-weight:700; }
+  .brandFallback[hidden], .avatarFallback[hidden], .photoMissing[hidden] { display:none !important; }
+  .search { width:min(240px,26vw); height:38px; padding:0 14px; border:0; border-radius:22px; background:#f0f2f5; color:#606770; outline:none; }
+  .nav { flex:1; display:flex; justify-content:center; align-items:stretch; gap:clamp(4px,2.5vw,28px); height:48px; }
+  .navItem { position:relative; min-width:54px; width:min(110px,15vw); border:0; border-radius:8px; background:transparent; color:#65676b; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px; }
+  .navItem svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  .navItem span { font-size:10px; font-weight:600; }
+  .navItem.active { color:#0866ff; }
+  .navItem.active::after { content:""; position:absolute; left:5px; right:5px; bottom:-6px; height:3px; border-radius:3px 3px 0 0; background:#0866ff; }
+  .status { margin-left:auto; color:#65676b; font-size:12px; white-space:nowrap; }
+  .feedScroll { flex:1; overflow-y:auto; overscroll-behavior:contain; touch-action:pan-y; padding:20px 12px 38px; }
+  .feed { width:min(600px,100%); margin:0 auto; }
+  .feedIntro { margin:0 0 12px; padding:0 4px; color:#65676b; font-size:13px; font-weight:700; }
+  .post { margin:0 0 14px; padding:14px 16px 8px; background:#fff; border:1px solid #e4e6eb; border-radius:10px; box-shadow:0 1px 2px #0000000a; }
+  .postHead { display:flex; align-items:center; gap:10px; }
+  .avatar, .avatarFallback { width:42px; height:42px; flex:none; border-radius:50%; object-fit:cover; background:#dbe7f5; }
+  .avatarFallback { display:grid; place-items:center; color:#185abc; font-weight:700; font-size:14px; }
+  .authorBlock { min-width:0; flex:1; }
+  .author { font-weight:700; font-size:14px; }
+  .postMeta { margin-top:3px; color:#65676b; font-size:11px; }
+  .postMeta .dot { padding:0 3px; }
+  .more { border:0; background:transparent; color:#65676b; width:34px; height:34px; border-radius:50%; font-size:22px; }
+  .more:active, .navItem:active, .action:active { background:#e4e6eb; }
+  .caption { margin:13px 0 12px; font-size:15px; line-height:1.45; overflow-wrap:anywhere; }
+  .postPhoto { display:block; width:calc(100% + 32px); height:auto; max-height:none; margin:0 -16px; object-fit:contain; background:#e4eaf2; }
+  .photoMissing { display:none; width:calc(100% + 32px); min-height:210px; margin:0 -16px; padding:20px; place-items:center; text-align:center; color:#667085; background:linear-gradient(135deg,#e8eef8,#dce7f5 50%,#edf1f7); font-size:13px; }
+  .postStats { display:flex; justify-content:space-between; gap:8px; padding:10px 2px; color:#65676b; border-bottom:1px solid #e4e6eb; font-size:12px; }
+  .postActions { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; padding-top:5px; }
+  .action { min-height:38px; border:0; border-radius:6px; background:transparent; color:#65676b; font-size:13px; font-weight:700; }
+  .action.liked { color:#0866ff; }
+  .commentBox { display:none; padding:9px 0 3px; }
+  .commentBox.open { display:block; }
+  .commentList { margin:2px 0 8px; }
+  .commentItem { padding:7px 10px; margin:5px 0; border-radius:14px; background:#f0f2f5; font-size:12px; overflow-wrap:anywhere; }
+  .commentForm { display:flex; gap:7px; }
+  .commentInput { flex:1; min-width:0; height:36px; padding:0 12px; border:0; border-radius:20px; background:#f0f2f5; outline:2px solid transparent; }
+  .commentInput:focus { outline-color:#c9ddff; }
+  .commentSend { padding:0 13px; border:0; border-radius:18px; color:#fff; background:#0866ff; font-weight:700; font-size:12px; }
+  .toast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); padding:9px 14px; border-radius:8px; color:#fff; background:#242526; box-shadow:0 3px 12px #0003; font-size:12px; opacity:0; pointer-events:none; transition:opacity .18s; }
+  .toast.show { opacity:1; }
+  #loader { position:fixed; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:#f0f2f5; color:#65676b; font-size:13px; }
+  .loaderLogo { width:50px; height:50px; display:grid; place-items:center; border-radius:50%; color:#fff; background:#0866ff; font-size:44px; font-weight:700; line-height:1; }
+  .spinner { width:30px; height:30px; border:3px solid #d9e5f8; border-top-color:#0866ff; border-radius:50%; animation:spin .75s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media (max-width:700px) {
+    .topbar { gap:5px; padding:6px 8px; }
+    .brand img, .brandFallback { width:36px; height:36px; }
+    .search, .status { display:none; }
+    .nav { min-width:0; gap:0; }
+    .navItem { min-width:0; width:20%; }
+    .navItem span { font-size:9px; }
+  }
+  @media (max-width:560px) {
+    .topbar { gap:8px; padding:6px 9px; }
+    .brand img, .brandFallback { width:38px; height:38px; }
+    .search { display:none; }
+    .nav { gap:2px; }
+    .navItem { min-width:40px; width:20%; }
+    .navItem svg { width:22px; height:22px; }
+    .navItem span { font-size:9px; }
+    .status { display:none; }
+    .feedScroll { padding:12px 8px 28px; }
+    .post { padding:12px 13px 7px; }
+    .postPhoto, .photoMissing { width:calc(100% + 26px); margin-left:-13px; margin-right:-13px; }
+  }
+</style>
+</head>
+<body>
+<div id="loader" aria-live="polite">
+  <img src="fb.png" alt="Facebook" style="width:50px;height:50px;object-fit:contain" onerror="this.hidden=true">
+  <div class="spinner" aria-hidden="true"></div>
+  <div>Loading your feed...</div>
+</div>
+
+<div class="appShell" id="appShell" aria-hidden="true">
+  <header class="topbar">
+    <div class="brand">
+      <img src="fb.png" alt="Facebook" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+      <span class="brandFallback" hidden aria-label="Facebook">f</span>
+    </div>
+    <input class="search" type="search" aria-label="Search" placeholder="Search">
+    <nav class="nav" aria-label="Main navigation">
+      <button class="navItem active" type="button" data-nav="Home" aria-label="Home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Home</span>
+      </button>
+      <button class="navItem" type="button" data-nav="Friend" aria-label="Friend">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.4-3.5 2.6-5.5 6.5-5.5s6.1 2 6.5 5.5M16 5.2a3.5 3.5 0 0 1 0 6.7M17 14.8c2.5.6 4 2.3 4.5 5.2"/></svg><span>Friend</span>
+      </button>
+      <button class="navItem" type="button" data-nav="Chat" aria-label="Chat">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v12H11l-5 4v-4H4z"/><path d="M8 9h8M8 12.5h5"/></svg><span>Chat</span>
+      </button>
+      <button class="navItem" type="button" data-nav="Notification" aria-label="Notification">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-2.5 7-2.5 9h17C20.5 16 18 16 18 9ZM10 21h4"/></svg><span>Notification</span>
+      </button>
+      <button class="navItem" type="button" data-nav="Video" aria-label="Video">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/></svg><span>Video</span>
+      </button>
+    </nav>
+    <div class="status">Ja De's feed</div>
+  </header>
+
+  <main class="feedScroll" id="feedScroll">
+    <section class="feed" aria-label="Social media feed">
+      <div class="feedIntro">RECENT POSTS</div>
+
+      <article class="post" data-post="1">
+        <div class="postHead">
+          <img class="avatar" src="poster1.png" alt="Ja De profile picture" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <span class="avatarFallback" hidden>JD</span>
+          <div class="authorBlock"><div class="author">Ja De</div><div class="postMeta">Just now <span class="dot">·</span> 🌐</div></div>
+          <button class="more" type="button" aria-label="More options">···</button>
+        </div>
+        <p class="caption">Hello haha</p>
+        <img class="postPhoto" src="post1.png" alt="Photo shared by Ja De" onerror="this.hidden=true;this.nextElementSibling.hidden=false;this.nextElementSibling.style.display='grid'">
+        <div class="photoMissing" hidden>POST PHOTO<br><strong>post1.png</strong><br><small>Add the image file beside computer.html to display it here.</small></div>
+        <div class="postStats"><span class="likeCount">0 likes</span><span class="commentCount">0 comments</span></div>
+        <div class="postActions">
+          <button class="action likeButton" type="button" aria-pressed="false">♡ Like</button>
+          <button class="action commentButton" type="button">▢ Comment</button>
+          <button class="action shareButton" type="button">↗ Share</button>
+        </div>
+        <div class="commentBox"><div class="commentList"></div><form class="commentForm"><input class="commentInput" aria-label="Write a comment" placeholder="Write a comment..."><button class="commentSend" type="submit">Post</button></form></div>
+      </article>
+
+      <article class="post" data-post="2">
+        <div class="postHead">
+          <img class="avatar" src="poster2.png" alt="Jake profile picture" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <span class="avatarFallback" hidden>J</span>
+          <div class="authorBlock"><div class="author">Jake</div><div class="postMeta">Just now <span class="dot">·</span> 🌐</div></div>
+          <button class="more" type="button" aria-label="More options">···</button>
+        </div>
+        <p class="caption">Pogi ako</p>
+        <div class="postStats"><span class="likeCount">0 likes</span><span class="commentCount">0 comments</span></div>
+        <div class="postActions">
+          <button class="action likeButton" type="button" aria-pressed="false">♡ Like</button>
+          <button class="action commentButton" type="button">▢ Comment</button>
+          <button class="action shareButton" type="button">↗ Share</button>
+        </div>
+        <div class="commentBox"><div class="commentList"></div><form class="commentForm"><input class="commentInput" aria-label="Write a comment" placeholder="Write a comment..."><button class="commentSend" type="submit">Post</button></form></div>
+      </article>
+
+      <article class="post" data-post="3">
+        <div class="postHead">
+          <img class="avatar" src="poster3.png" alt="Carl profile picture" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <span class="avatarFallback" hidden>C</span>
+          <div class="authorBlock"><div class="author">Carl</div><div class="postMeta">Just now <span class="dot">·</span> 🌐</div></div>
+          <button class="more" type="button" aria-label="More options">···</button>
+        </div>
+        <p class="caption">Bagong gising</p>
+        <img class="postPhoto" src="post3.png" alt="Photo shared by Carl" onerror="this.hidden=true;this.nextElementSibling.hidden=false;this.nextElementSibling.style.display='grid'">
+        <div class="photoMissing" hidden>POST PHOTO<br><strong>post3.png</strong><br><small>Add the image file beside computer.html to display it here.</small></div>
+        <div class="postStats"><span class="likeCount">0 likes</span><span class="commentCount">0 comments</span></div>
+        <div class="postActions">
+          <button class="action likeButton" type="button" aria-pressed="false">♡ Like</button>
+          <button class="action commentButton" type="button">▢ Comment</button>
+          <button class="action shareButton" type="button">↗ Share</button>
+        </div>
+        <div class="commentBox"><div class="commentList"></div><form class="commentForm"><input class="commentInput" aria-label="Write a comment" placeholder="Write a comment..."><button class="commentSend" type="submit">Post</button></form></div>
+      </article>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  const loader = document.getElementById('loader');
+  const appShell = document.getElementById('appShell');
+  window.setTimeout(() => {
+    loader.style.display = 'none';
+    appShell.style.display = 'flex';
+    appShell.removeAttribute('aria-hidden');
+  }, 2000);
+
+  let toastTimer = 0;
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  document.querySelectorAll('[data-nav]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-nav]').forEach(item => item.classList.toggle('active', item === button));
+      showToast(button.dataset.nav);
+    });
+  });
+
+  document.querySelectorAll('.post').forEach(post => {
+    const likeButton = post.querySelector('.likeButton');
+    const likeCount = post.querySelector('.likeCount');
+    let likes = 0;
+    likeButton.addEventListener('click', () => {
+      const liked = likeButton.getAttribute('aria-pressed') !== 'true';
+      likeButton.setAttribute('aria-pressed', String(liked));
+      likeButton.classList.toggle('liked', liked);
+      likeButton.textContent = liked ? '♥ Liked' : '♡ Like';
+      likes = Math.max(0, likes + (liked ? 1 : -1));
+      likeCount.textContent = likes + (likes === 1 ? ' like' : ' likes');
+    });
+
+    const commentBox = post.querySelector('.commentBox');
+    const commentButton = post.querySelector('.commentButton');
+    const commentCount = post.querySelector('.commentCount');
+    const commentList = post.querySelector('.commentList');
+    let comments = 0;
+    commentButton.addEventListener('click', () => {
+      commentBox.classList.toggle('open');
+      if (commentBox.classList.contains('open')) commentBox.querySelector('input').focus();
+    });
+    post.querySelector('.commentForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const input = post.querySelector('.commentInput');
+      const value = input.value.trim();
+      if (!value) return;
+      const item = document.createElement('div');
+      item.className = 'commentItem';
+      item.textContent = value;
+      commentList.appendChild(item);
+      comments++;
+      commentCount.textContent = comments + (comments === 1 ? ' comment' : ' comments');
+      input.value = '';
+    });
+
+    post.querySelector('.shareButton').addEventListener('click', async () => {
+      const shareUrl = location.href.split('#')[0] + '#post-' + post.dataset.post;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: 'Post by ' + post.querySelector('.author').textContent, url: shareUrl });
+          showToast('Post shared');
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(shareUrl);
+          showToast('Post link copied');
+        } else {
+          showToast('Share link: ' + shareUrl);
+        }
+      } catch (error) {
+        if (error && error.name !== 'AbortError') showToast('Unable to share this post');
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "id": "20261122T115952Z-857c81",
+  "createdAt": "2026-11-22T11:59:52.498Z",
+  "project": "Officegame",
+  "reason": "Zoom out the portrait social feed so more of the header and posts fit onscreen while preserving its scrollable layout.",
+  "kind": "automatic",
+  "status": "completed",
+  "files": [
+    {
+      "path": "computer.html",
+      "state": "backed-up",
+      "backup": ".backup/sessions/20261122T115952Z-857c81/computer.html.bak.zoom-out-the-portrait-social-feed-so-more-of-the",
+      "size": 16448,
+      "sha256": "b1d53e2ccb5a88d4c6abd3d5745f06aa154f1a575b7f1c56128acd8d51eb4c3a",
+      "modifiedAt": "2026-11-22T11:52:51.058Z"
+    }
+  ],
+  "riskLevel": "low",
+  "scope": "changed-files",
+  "fileCount": 1,
+  "completedAt": "2026-11-22T11:59:52.587Z"
+}

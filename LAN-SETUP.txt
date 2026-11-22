@@ -1,0 +1,13 @@
+NEXORA CORPORATION — LAN TESTING
+
+1. Connect the phone and the device you want to test on to the same Wi-Fi network.
+2. In Termux, open this project folder:
+   cd /storage/emulated/0/Officegame
+3. Start the LAN server:
+   bash start-lan.sh
+4. On the other device, open the URL printed by the script. It will look like:
+   http://192.168.x.x:8000
+5. Use W A S D to move and E to talk or interact.
+6. Keep the Termux server running while playing. Press Ctrl+C in Termux to stop it.
+
+The LAN server only shares the game webpage and its assets over the local network. It is not multiplayer and does not synchronize progress between devices. Progress resets whenever the page is refreshed.

@@ -1,0 +1,19 @@
+{
+  "id": "20261122T133110Z-836ef6",
+  "createdAt": "2026-11-22T13:31:10.606Z",
+  "project": "Officegame",
+  "reason": "Checkpoint before redistributing correct A/B/C answers across the five company decision scenarios.",
+  "kind": "manual",
+  "status": "ready",
+  "files": [
+    {
+      "path": "index.html",
+      "state": "backed-up",
+      "backup": ".backup/sessions/20261122T133110Z-836ef6/index.html.bak.checkpoint-before-redistributing-correct-a-b-c-a",
+      "size": 99706,
+      "sha256": "3a6fa2bac2c7b123af113517fe72dbd8119cebea634ec5168a2305a858c83d2d",
+      "modifiedAt": "2026-11-22T13:18:57.798Z"
+    }
+  ],
+  "completedAt": "2026-11-22T13:31:10.661Z"
+}

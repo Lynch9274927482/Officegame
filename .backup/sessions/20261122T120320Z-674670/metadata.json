@@ -1,0 +1,22 @@
+{
+  "id": "20261122T120320Z-674670",
+  "createdAt": "2026-11-22T12:03:20.844Z",
+  "project": "Officegame",
+  "reason": "Further zoom out the portrait social feed for desktop viewing and cap post-photo height so each image takes substantially less vertical space while preserving its full aspect ratio.",
+  "kind": "automatic",
+  "status": "completed",
+  "files": [
+    {
+      "path": "computer.html",
+      "state": "backed-up",
+      "backup": ".backup/sessions/20261122T120320Z-674670/computer.html.bak.further-zoom-out-the-portrait-social-feed-for-de",
+      "size": 16476,
+      "sha256": "6ae19fd82fdf8b4d48df91621c2df4985ea61094acbb3cff243a5210ccdb15ba",
+      "modifiedAt": "2026-11-22T11:59:52.568Z"
+    }
+  ],
+  "riskLevel": "low",
+  "scope": "changed-files",
+  "fileCount": 1,
+  "completedAt": "2026-11-22T12:03:20.944Z"
+}

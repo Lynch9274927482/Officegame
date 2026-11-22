@@ -1,0 +1,19 @@
+{
+  "id": "20261122T131726Z-f01b82",
+  "createdAt": "2026-11-22T13:17:26.092Z",
+  "project": "Officegame",
+  "reason": "Checkpoint before changing all company decisions to three alphabetical options with one correct answer each.",
+  "kind": "manual",
+  "status": "ready",
+  "files": [
+    {
+      "path": "index.html",
+      "state": "backed-up",
+      "backup": ".backup/sessions/20261122T131726Z-f01b82/index.html.bak.checkpoint-before-changing-all-company-decisions",
+      "size": 98569,
+      "sha256": "2383c706daaa5e75a881adec32e91ac67bc1c552e1ea1c9bbf7971ab1b08ba00",
+      "modifiedAt": "2026-11-22T11:52:51.028Z"
+    }
+  ],
+  "completedAt": "2026-11-22T13:17:26.208Z"
+}
